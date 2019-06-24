@@ -14,7 +14,7 @@ pipeline {
 
             steps {
 
-                bat 'gradle clean build'
+                bat 'gradle.bat clean build'
 
             }
 
@@ -24,7 +24,7 @@ pipeline {
 
             steps {
 
-                bat 'gradle clean test'
+                bat 'gradle.bat clean test'
 
             }
         }
@@ -33,7 +33,7 @@ pipeline {
 
             steps {
 
-                bat 'gradle clean stage'
+                bat 'gradle.bat clean stage'
 
             }
         }
