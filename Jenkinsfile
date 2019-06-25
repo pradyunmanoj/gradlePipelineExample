@@ -9,7 +9,7 @@ pipeline {
     }
 
     tools {
-        jdk 'jdk-9.0.1'
+        jdk 'JAVA_HOME'
     }
 
     stages {
