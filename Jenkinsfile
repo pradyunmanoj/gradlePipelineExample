@@ -8,6 +8,10 @@ pipeline {
 
     }
 
+    tools {
+        jdk 'jdk-9.0.1'
+    }
+
     stages {
 
         stage('Gradle Build') {
@@ -30,7 +34,7 @@ pipeline {
         }
 
         stage('Gradle Building Deployment Artifacts') {
-            
+
             steps {
 
                 bat 'gradlew.bat clean stage'
