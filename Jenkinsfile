@@ -11,9 +11,7 @@ pipeline {
     stages {
 
         stage('Gradle Build') {
-            tools {
-                jdk "jdk-9.0.1"
-            }
+
             steps {
 
                 bat 'gradlew.bat clean build'
@@ -23,9 +21,7 @@ pipeline {
         }
 
         stage('Gradle Test') {
-            tools {
-                            jdk "jdk-9.0.1"
-                        }
+
             steps {
 
                 bat 'gradlew.bat clean test'
@@ -34,9 +30,7 @@ pipeline {
         }
 
         stage('Gradle Building Deployment Artifacts') {
-            tools {
-                            jdk "jdk-9.0.1"
-                        }
+            
             steps {
 
                 bat 'gradlew.bat clean stage'
