@@ -1,7 +1,10 @@
-final String ARTIFACTORY_SERVER_ID = 'cernerrepos-manyata-corp'
-final String ARTIFACTORY_URL = 'https://cernerrepos.net'
+def call(String git_org, String git_repo) {
 
-pipeline {
+    final String build_name = "${git_org}:${git_repo}"
+    final String ARTIFACTORY_SERVER_ID = 'cernerrepos-manyata-corp'
+    final String ARTIFACTORY_URL = 'https://cernerrepos.net'
+
+    pipeline {
 
     agent any
 
@@ -78,5 +81,6 @@ pipeline {
                 )
             }
         }
+    }
     }
 }
