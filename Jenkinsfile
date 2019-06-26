@@ -15,6 +15,7 @@
 
     tools {
         jdk 'JAVA_HOME'
+        
     }
 
     stages {
