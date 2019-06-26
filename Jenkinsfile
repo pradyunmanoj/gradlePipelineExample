@@ -15,7 +15,7 @@
 
     tools {
         jdk 'JAVA_HOME'
-        
+        gradle 'GRADLE_HOME'
     }
 
     stages {
@@ -60,7 +60,6 @@
             steps {
                 rtGradleRun (
                     usesPlugin: true,
-                    tool: GRADLE_HOME,
                     useWrapper: true,
                     buildFile: 'build.gradle',
                     tasks: 'clean artifactoryPublish',
