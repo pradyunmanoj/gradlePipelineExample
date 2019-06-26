@@ -15,7 +15,6 @@
 
     tools {
         jdk 'JAVA_HOME'
-        gradle 'GRADLE_HOME'
     }
 
     stages {
