@@ -29,7 +29,8 @@
             steps {
                 rtServer (
                     id: "ARTIFACTORY_SERVER",
-                    url: "https://cernerrepos.net/"
+                    url: "https://cernerrepos.net:443/maven-snapshot",
+                    bypassProxy: true
                 )
 
                 rtGradleDeployer (
@@ -52,6 +53,19 @@
             }
         }
 
+        stage('Execute Gradle') {
+            steps {
+                rtGradleRun (
+                    deployerId: "GRADLE_DEPLOYER",
+                    tool: 'GRADLE_HOME',
+                    useWrapper: true,
+                    buildFile: 'build.gradle',
+                    tasks: 'clean build artifactoryPublish',
+                    buildName: "${build_name}",
+                    buildNumber: "${currentBuild.number}"
+                )
+            }
+        }
 
         stage('Publish Build Info') {
             steps {
