@@ -1,7 +1,5 @@
 
     final String build_name = 'PradyunManoj_gradlePipelineExample'
-    final String ARTIFACTORY_SERVER_ID = 'cernerrepos-manyata-corp'
-    final String ARTIFACTORY_URL = 'https://cernerrepos.net'
 
     pipeline {
 
@@ -30,14 +28,13 @@
         stage('Artifactory Configuration') {
             steps {
                 rtServer (
-                    id: "${ARTIFACTORY_SERVER_ID}",
-                    url: "${ARTIFACTORY_URL}",
-                    bypassProxy: true
+                    id: "ARTIFACTORY_SERVER",
+                    url: "https://cernerrepos.net/"
                 )
 
                 rtGradleDeployer (
                     id: "GRADLE_DEPLOYER",
-                    serverId: "${ARTIFACTORY_SERVER_ID}",
+                    serverId: "ARTIFACTORY_SERVER",
                     repo: "maven-snapshot",
                     excludePatterns: ["*.war"],
                 )
@@ -60,10 +57,10 @@
                 rtGradleRun (
                     deployerId: "GRADLE_DEPLOYER",
                     tool: 'GRADLE_HOME',
-                    usesPlugin: true,
                     useWrapper: true,
+                    rootDir: "gradlePipelineExample/",
                     buildFile: 'build.gradle',
-                    tasks: 'clean build',
+                    tasks: 'clean artifactoryPublish',
                     buildName: "${build_name}",
                     buildNumber: "${currentBuild.number}"
                 )
@@ -73,7 +70,7 @@
         stage('Publish Build Info') {
             steps {
                 rtPublishBuildInfo (
-                    serverId: "${ARTIFACTORY_SERVER_ID}",
+                    serverId: "ARTIFACTORY_SERVER",
                     buildName: "${build_name}",
                     buildNumber: "${currentBuild.number}"
                 )
