@@ -29,14 +29,14 @@
             steps {
                 rtServer (
                     id: "ARTIFACTORY_SERVER",
-                    url: "https://cernerrepos.net:443/maven-snapshot",
+                    url: "https://cernerrepos.net:443/",
                     bypassProxy: true
                 )
 
                 rtGradleDeployer (
                     id: "GRADLE_DEPLOYER",
                     serverId: "ARTIFACTORY_SERVER",
-                    repo: "maven-snapshot",
+                    releaseRepo: "maven-snapshot/",
                     excludePatterns: ["*.war"],
                 )
 
