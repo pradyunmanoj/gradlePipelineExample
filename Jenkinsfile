@@ -52,20 +52,6 @@
             }
         }
 
-        stage('Execute Gradle') {
-            steps {
-                rtGradleRun (
-                    deployerId: "GRADLE_DEPLOYER",
-                    tool: 'GRADLE_HOME',
-                    useWrapper: true,
-                    rootDir: "gradlePipelineExample/",
-                    buildFile: 'build.gradle',
-                    tasks: 'clean build artifactoryPublish',
-                    buildName: "${build_name}",
-                    buildNumber: "${currentBuild.number}"
-                )
-            }
-        }
 
         stage('Publish Build Info') {
             steps {
