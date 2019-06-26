@@ -36,7 +36,7 @@
                 rtGradleDeployer (
                     id: "GRADLE_DEPLOYER",
                     serverId: "ARTIFACTORY_SERVER",
-                    releaseRepo: "maven-snapshot/",
+                    repo: "maven-snapshot/",
                     excludePatterns: ["*.war"],
                 )
 
