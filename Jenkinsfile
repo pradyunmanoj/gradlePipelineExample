@@ -59,11 +59,11 @@
         stage('Execute Gradle') {
             steps {
                 rtGradleRun (
+                    deployerId: "GRADLE_DEPLOYER",
                     usesPlugin: true,
                     useWrapper: true,
                     buildFile: 'build.gradle',
-                    tasks: 'clean artifactoryPublish',
-                    deployerId: "GRADLE_DEPLOYER",
+                    tasks: 'clean build',
                     buildName: "${build_name}",
                     buildNumber: "${currentBuild.number}"
                 )
