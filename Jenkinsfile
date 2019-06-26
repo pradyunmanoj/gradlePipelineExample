@@ -15,7 +15,6 @@
 
     tools {
         jdk 'JAVA_HOME'
-        gradle 'GRADLE_HOME'
     }
 
     stages {
@@ -60,6 +59,7 @@
             steps {
                 rtGradleRun (
                     deployerId: "GRADLE_DEPLOYER",
+                    tool: 'GRADLE_HOME',
                     usesPlugin: true,
                     useWrapper: true,
                     buildFile: 'build.gradle',
