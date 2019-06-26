@@ -1,3 +1,6 @@
+final String ARTIFACTORY_SERVER_ID = 'cernerrepos-manyata-corp'
+final String ARTIFACTORY_URL = 'https://cernerrepos.net'
+
 pipeline {
 
     agent any
@@ -10,38 +13,70 @@ pipeline {
 
     tools {
         jdk 'JAVA_HOME'
+        gradle 'GRADLE_HOME'
     }
 
     stages {
-
-        stage('Gradle Build') {
-
+        stage('Initiation') {
             steps {
-
-                bat 'gradlew.bat clean build'
-
-            }
-
-        }
-
-        stage('Gradle Test') {
-
-            steps {
-
-                bat 'gradlew.bat clean test'
-
+                script {
+                    echo 'Update build name.'
+                    currentBuild.displayName = "#${currentBuild.number}: $build_name"
+                }
             }
         }
 
-        stage('Gradle Building Deployment Artifacts') {
-
+        stage('Artifactory Configuration') {
             steps {
+                rtServer (
+                    id: "${ARTIFACTORY_SERVER_ID}",
+                    url: "${ARTIFACTORY_URL}",
+                    bypassProxy: true
+                )
 
-                bat 'gradlew.bat clean stage'
+                rtGradleDeployer (
+                    id: "GRADLE_DEPLOYER",
+                    serverId: "${ARTIFACTORY_SERVER_ID}",
+                    repo: "maven-snapshot",
+                    excludePatterns: ["*.war"],
+                )
 
             }
         }
 
+        stage('Config build Info') {
+            steps {
+                rtBuildInfo (
+                    captureEnv: true,
+                    buildName: "${build_name}",
+                    buildNumber: "${currentBuild.number}"
+                )
+            }
+        }
+
+        stage('Execute Gradle') {
+            steps {
+                rtGradleRun (
+                    usesPlugin: true,
+                    tool: GRADLE_HOME,
+                    useWrapper: true,
+                    buildFile: 'build.gradle',
+                    tasks: 'clean artifactoryPublish',
+                    deployerId: "GRADLE_DEPLOYER",
+                    buildName: "${build_name}",
+                    buildNumber: "${currentBuild.number}"
+                )
+            }
+        }
+
+        stage('Publish Build Info') {
+            steps {
+                rtPublishBuildInfo (
+                    serverId: "${ARTIFACTORY_SERVER_ID}",
+                    buildName: "${build_name}",
+                    buildNumber: "${currentBuild.number}"
+                )
+            }
+        }
     }
-
 }
