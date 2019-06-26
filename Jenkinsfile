@@ -1,6 +1,5 @@
-def call(String git_org, String git_repo) {
 
-    final String build_name = "${git_org}:${git_repo}"
+    final String build_name = 'PradyunManoj_gradlePipelineExample'
     final String ARTIFACTORY_SERVER_ID = 'cernerrepos-manyata-corp'
     final String ARTIFACTORY_URL = 'https://cernerrepos.net'
 
@@ -81,6 +80,5 @@ def call(String git_org, String git_repo) {
                 )
             }
         }
-    }
     }
 }
