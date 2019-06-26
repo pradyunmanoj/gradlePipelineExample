@@ -60,7 +60,7 @@
                     useWrapper: true,
                     rootDir: "gradlePipelineExample/",
                     buildFile: 'build.gradle',
-                    tasks: 'clean artifactoryPublish',
+                    tasks: 'clean build artifactoryPublish',
                     buildName: "${build_name}",
                     buildNumber: "${currentBuild.number}"
                 )
