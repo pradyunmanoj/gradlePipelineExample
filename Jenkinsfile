@@ -29,7 +29,7 @@
             steps {
                 rtServer (
                     id: "ARTIFACTORY_SERVER",
-                    url: "https://cernerrepos.net",
+                    url: "https://cernerrepos.net/maven-snapshot-local",
                     bypassProxy: true
                 )
 
