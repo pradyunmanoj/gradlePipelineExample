@@ -1,5 +1,5 @@
 
-    final String build_name = 'PradyunManoj_gradlePipelineExample'
+
 
     pipeline {
 
@@ -16,65 +16,34 @@
     }
 
     stages {
-        stage('Initiation') {
-            steps {
-                script {
-                    echo 'Update build name.'
-                    currentBuild.displayName = "#${currentBuild.number}: $build_name"
+
+            stage('Gradle Build') {
+
+                steps {
+
+                    bat 'gradlew.bat clean build'
+
+                }
+
+            }
+
+            stage('Gradle Test') {
+
+                steps {
+
+                    bat 'gradlew.bat clean test'
+
                 }
             }
-        }
+    
+            stage('Gradle Building Deployment Artifacts') {
 
-        stage('Artifactory Configuration') {
-            steps {
-                rtServer (
-                    id: "ARTIFACTORY_SERVER",
-                    url: "https://cernerrepos.net/maven-snapshot-local",
-                    bypassProxy: true
-                )
+                steps {
 
-                rtGradleDeployer (
-                    id: "GRADLE_DEPLOYER",
-                    serverId: "ARTIFACTORY_SERVER",
-                    repo: "maven-snapshot-local",
-                    excludePatterns: ["*.war"]
-                )
+                    bat 'gradlew.bat clean publish'
 
+                }
             }
-        }
 
-        stage('Config build Info') {
-            steps {
-                rtBuildInfo (
-                    captureEnv: true,
-                    buildName: "${build_name}",
-                    buildNumber: "${currentBuild.number}"
-                )
-            }
         }
-
-        stage('Execute Gradle') {
-            steps {
-                rtGradleRun (
-                    deployerId: "GRADLE_DEPLOYER",
-                    tool: 'GRADLE_HOME',
-                    useWrapper: true,
-                    buildFile: 'build.gradle',
-                    tasks: 'clean build publish',
-                    buildName: "${build_name}",
-                    buildNumber: "${currentBuild.number}"
-                )
-            }
-        }
-
-        stage('Publish Build Info') {
-            steps {
-                rtPublishBuildInfo (
-                    serverId: "ARTIFACTORY_SERVER",
-                    buildName: "${build_name}",
-                    buildNumber: "${currentBuild.number}"
-                )
-            }
-        }
-    }
 }
