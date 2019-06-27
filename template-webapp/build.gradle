@@ -1,0 +1,12 @@
+apply plugin: 'application'
+apply plugin: 'war'
+apply plugin: "maven-publish"
+
+mainClassName = 'io.jeffchao.template.core.Core'
+
+dependencies {
+}
+
+run.doFirst {
+  // Environment variables go here.
+}

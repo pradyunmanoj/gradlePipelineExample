@@ -2,3 +2,4 @@
 
 include 'template-core'
 include 'template-server'
+include 'template-webapp'

@@ -35,7 +35,7 @@
 
                 }
             }
-    
+
             stage('Gradle Building Deployment Artifacts') {
 
                 steps {
