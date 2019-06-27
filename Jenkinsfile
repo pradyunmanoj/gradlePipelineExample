@@ -36,7 +36,7 @@
                 rtGradleDeployer (
                     id: "GRADLE_DEPLOYER",
                     serverId: "ARTIFACTORY_SERVER",
-                    repo: "maven-snapshot/",
+                    repo: "maven-snapshot-local/",
                     excludePatterns: ["*.war"],
                 )
 
@@ -60,7 +60,7 @@
                     tool: 'GRADLE_HOME',
                     useWrapper: true,
                     buildFile: 'build.gradle',
-                    tasks: 'clean build artifactoryPublish',
+                    tasks: 'clean build publish',
                     buildName: "${build_name}",
                     buildNumber: "${currentBuild.number}"
                 )

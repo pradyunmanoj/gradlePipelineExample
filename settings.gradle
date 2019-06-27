@@ -1,4 +1,4 @@
-rootProject.name = 'basicGradle'
+//rootProject.name = 'basicGradle'
 
 include 'template-core'
 include 'template-server'

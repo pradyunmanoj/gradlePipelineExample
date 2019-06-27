@@ -10,16 +10,31 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
     }
 }
 
 allprojects {
+    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'idea'
+    configure(subprojects.findAll { new File(it.projectDir, 'src').directory }) {
+        apply plugin: 'java'
+    }
+    group = 'pradyun.example'
+    version = currentVersion
+//    status = 'Integration'
     repositories {
-        mavenLocal()
-        mavenCentral() // maven { url: 'http://jcenter.bintray.com' }
+        maven { url 'http://repo.jenkins-ci.org/public' }
+
+        maven { url 'http://repo.jenkins-ci.org/releases/' }
+
+        maven { url 'http://updates.jenkins-ci.org/download/plugins/' }
+
+        maven { url 'http://jenkins-updates.cloudbees.com/download/plugins/' }
     }
 }
+
+artifactoryPublish.skip = true
 
 apply from: file('gradle/check.gradle')
 apply from: file('gradle/heroku/clean.gradle')
@@ -27,9 +42,59 @@ apply from: file('gradle/heroku/clean.gradle')
 subprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'java'
-    apply plugin: "com.jfrog.artifactory"
+    apply plugin: 'maven'
 
-    group = "io.jeffchao.${rootProject.name}"
+    plugins.withType(MavenPublishPlugin).whenPluginAdded {
+
+        publishing {
+            repositories {
+                maven {
+                    url project.properties['publishRepoUrl']
+                    credentials {
+                        username project.properties['publishRepoUser']
+                        password project.properties['publishRepoPassword']
+                    }
+                }
+            }
+            publications {
+
+                mavenJava(MavenPublication) {
+                    from components.java
+
+                }
+            }
+        }
+    }
+
+    if (project.plugins.hasPlugin('java')) {
+        //manifest.mainAttributes(provider: 'gradle')
+        manifest {
+            attributes 'provider': 'gradle'
+        }
+        configurations {
+            published
+        }
+        dependencies {
+            testCompile 'junit:junit:4.7'
+        }
+        task sourceJar(type: Jar) {
+            from sourceSets.main.allSource
+            classifier = 'sources'
+        }
+        task javadocJar(type: Jar, dependsOn: javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+        artifactoryPublish {
+            dependsOn sourceJar, javadocJar
+        }
+        artifacts {
+            published sourceJar
+            published javadocJar
+        }
+    }
+
+//    group = "io.jeffchao.${rootProject.name}"
 
     dependencies {
         implementation 'com.google.guava:guava:23.0'
@@ -46,4 +111,43 @@ subprojects {
 
     apply from: file("$rootProject.projectDir/gradle/heroku/stage.gradle")
 
+}
+
+task(createRelease) << {
+    def gradleProperties = file("gradle.properties")
+    def lines = gradleProperties.readLines()
+    def line = lines.first()
+    def versions = line.split("=")
+    def version = versions.last().replace("-SNAPSHOT", "")
+    lines[0] = "buildVersion=" + version
+    gradleProperties.withWriter {
+        lines.eachWithIndex{ l, i ->
+            it.write(l + "\n")
+        }
+    }
+}
+
+task(createSnapshot) << {
+    def gradleProperties = file("gradle.properties")
+    def lines = gradleProperties.readLines()
+    def line = lines.first()
+    def versions = line.split("=")
+    def version = versions.last().replace("-SNAPSHOT", "")
+    def numbers = version.split("\\.")
+    def newNumber = numbers.last().toInteger() + 1
+    numbers[numbers.size()-1] = newNumber.toString()
+    version = new String()
+    numbers.eachWithIndex { num, i ->
+        if (i < numbers.size() - 1) {
+            version = version + num + "."
+        } else {
+            version = version + num
+        }
+    }
+    lines[0] = "buildVersion=" + version + "-SNAPSHOT"
+    gradleProperties.withWriter {
+        lines.eachWithIndex{ l, i ->
+            it.write(l + "\n")
+        }
+    }
 }

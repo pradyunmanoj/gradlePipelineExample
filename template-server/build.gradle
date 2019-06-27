@@ -1,4 +1,6 @@
 apply plugin: 'application'
+apply plugin: 'war'
+apply plugin: "maven-publish"
 
 mainClassName = 'io.jeffchao.template.server.Server'
 
